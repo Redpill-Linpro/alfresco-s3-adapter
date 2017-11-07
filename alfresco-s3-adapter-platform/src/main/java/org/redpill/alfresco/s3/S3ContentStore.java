@@ -59,6 +59,7 @@ public class S3ContentStore extends AbstractContentStore
   private String rootDirectory;
   private String endpoint;
   private String signatureVersion;
+  private String sseAlgorithm;
   private int connectionTimeout = 50000;
   private int maxErrorRetry = 5;
   private long connectionTTL = 60000L;
@@ -219,6 +220,10 @@ public class S3ContentStore extends AbstractContentStore
     this.accessKey = accessKey;
   }
   
+  public void setSseAlgorithm(String sseAlgorithm) {
+	    this.sseAlgorithm = sseAlgorithm;
+	  }
+  
   public void setSecretKey(String secretKey) {
     this.secretKey = secretKey;
   }
@@ -265,7 +270,7 @@ public class S3ContentStore extends AbstractContentStore
     
     String key = makeS3Key(contentUrl);
     
-    return new S3ContentWriter(bucketName, key, contentUrl, existingContentReader, s3Client, transferManager);
+    return new S3ContentWriter(bucketName, key, contentUrl, existingContentReader, s3Client, transferManager, sseAlgorithm);
     
   }
 

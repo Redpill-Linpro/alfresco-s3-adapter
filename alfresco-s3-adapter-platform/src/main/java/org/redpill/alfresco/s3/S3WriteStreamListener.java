@@ -1,5 +1,7 @@
 package org.redpill.alfresco.s3;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 import org.alfresco.service.cmr.repository.ContentIOException;
@@ -35,8 +37,19 @@ public class S3WriteStreamListener implements ContentStreamListener {
       LOG.debug("Writing to s3://" + writer.getBucketName() + "/" + writer.getKey());
     }
     TransferManager transferManager = writer.getTransferManager();
-
-    Upload upload = transferManager.upload(writer.getBucketName(), writer.getKey(), writer.getTempFile());
+    
+    Upload upload;
+    if (writer.getSSEAlgorithm() != null)
+    {
+    	PutObjectRequest putRequest = new PutObjectRequest(writer.getBucketName(), writer.getKey(), writer.getTempFile());
+    	// Request server-side encryption.
+    	ObjectMetadata objectMetadata = new ObjectMetadata();
+    	objectMetadata.setSSEAlgorithm(writer.getSSEAlgorithm());   
+    	putRequest.setMetadata(objectMetadata);
+    	upload = transferManager.upload(putRequest);
+    }
+    else
+    	upload = transferManager.upload(writer.getBucketName(), writer.getKey(), writer.getTempFile());
     //To have transactional consistency it is necessary to wait for the upload to go through before allowing the transaction to commit!
     try {
       if (LOG.isTraceEnabled()) {

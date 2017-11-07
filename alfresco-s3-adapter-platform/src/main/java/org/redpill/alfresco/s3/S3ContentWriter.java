@@ -1,7 +1,11 @@
 package org.redpill.alfresco.s3;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.transfer.TransferManager;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
+
 import org.alfresco.repo.content.AbstractContentWriter;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -10,11 +14,8 @@ import org.alfresco.util.TempFileProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.transfer.TransferManager;
 
 /**
  * S3 content writer
@@ -31,13 +32,15 @@ public class S3ContentWriter extends AbstractContentWriter {
   private final String bucketName;
   private File tempFile;
   private long size;
+  private String sseAlgorithm;
 
-  public S3ContentWriter(String bucketName, String key, String contentUrl, ContentReader existingContentReader, AmazonS3 client, TransferManager transferManager) {
+  public S3ContentWriter(String bucketName, String key, String contentUrl, ContentReader existingContentReader, AmazonS3 client, TransferManager transferManager, String sseAlgorithm) {
     super(contentUrl, existingContentReader);
     this.key = key;
     this.client = client;
     this.transferManager = transferManager;
     this.bucketName = bucketName;
+    this.sseAlgorithm = sseAlgorithm;
     addListener(new S3WriteStreamListener(this));
   }
 
@@ -87,5 +90,12 @@ public class S3ContentWriter extends AbstractContentWriter {
 
   public File getTempFile() {
     return tempFile;
+  }
+  
+  public String getSSEAlgorithm() {
+	  if (sseAlgorithm != null && !sseAlgorithm.trim().isEmpty())
+		  return sseAlgorithm;
+	  else
+		  return null;
   }
 }
