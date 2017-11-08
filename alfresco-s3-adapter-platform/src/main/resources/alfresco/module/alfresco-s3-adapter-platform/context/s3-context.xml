@@ -85,6 +85,7 @@
     <property name="accessKey" value="${aws.accessKey}"/>
     <property name="secretKey" value="${aws.secretKey}"/>
     <property name="bucketName" value="${aws.s3.bucketName}"/>
+    <property name="sseAlgorithm" value="${aws.s3.sse}"/>
     <property name="regionName" value="${aws.regionName}"/>
     <property name="rootDirectory" value="${aws.s3.rootDirectory}"/>
     <property name="endpoint" value="${aws.s3.endpoint}"/>
