@@ -17,7 +17,7 @@ This project is meant to provide tools to use s3 as a storage solution for Alfre
 
 ## Installation
 
- * This module does not work stand alone out of the box but will require further configuration. Either install it as an amp in your alfresco installation and configure it using spring xml files in shared/classes/extension/s3-override-context.xml.
+ * This module does not work stand alone out of the box but will require further configuration. Either install it as an amp in your alfresco installation and configure it using spring xml files in shared/classes/alfresco/extension/s3-override-context.xml.
  * If you have your own amp project you can include the s3 module as a dependency.
  
 ### Use as content store selector
